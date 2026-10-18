@@ -1,0 +1,7 @@
+# Curated capability overrides for JOMPT ranking.
+# Keys are model ids from opencode models.json (free opencode provider only).
+# Example:
+# some-model-free:
+#   score: 75
+#   strengths: [code, reasoning, tools]
+{}
