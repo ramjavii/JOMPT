@@ -12,7 +12,7 @@ from pathlib import Path
 
 from jompt.config import Settings, default_settings
 from jompt.jev.rank_list import load_rank_list
-from jompt.jev.selector import select_model
+from jompt.jev.selector import select_model, top_k_by_score
 from jompt.jev.systemone import SystemOneClient
 
 
@@ -28,6 +28,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="jompt-select", description="Select a model with JEV")
     parser.add_argument("prompt", nargs="?", help="prompt text to route")
     parser.add_argument("--rank-list", type=Path, default=None, help="path to rank list JSON")
+    parser.add_argument("--top-k", type=int, default=None, help="pre-filter to top-K by score (default: settings)")
     args = parser.parse_args(argv)
 
     if not args.prompt:
@@ -36,6 +37,8 @@ def main(argv: list[str] | None = None) -> int:
     settings = default_settings()
     rank_path = args.rank_list or settings.rank_list_path
     rank = load_rank_list(rank_path)
+    k = args.top_k if args.top_k is not None else settings.rank_choice_top_k
+    rank = top_k_by_score(rank, k)
     chosen = select_model(args.prompt, rank, _make_client(settings))
     print(chosen)
     return 0

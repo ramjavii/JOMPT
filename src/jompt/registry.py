@@ -72,3 +72,42 @@ def load_free_models(models_json: Path) -> list[dict[str, Any]]:
         )
     models.sort(key=lambda x: x["id"])
     return models
+
+
+def list_free_ids(models_json: Path) -> list[str]:
+    """Sorted free model ids from models.json."""
+    return [m["id"] for m in load_free_models(models_json)]
+
+
+def get_models_by_ids(models_json: Path, ids: list[str]) -> list[dict[str, Any]]:
+    """Return free models for exactly the requested ids (order preserved).
+
+    Raises ValueError on empty input, duplicates, unknown ids, or paid models.
+    """
+    if not ids:
+        raise ValueError("id list is empty")
+    cleaned = [i.strip() for i in ids if isinstance(i, str) and i.strip()]
+    if len(cleaned) != len(ids) or any(not i for i in cleaned):
+        raise ValueError("id list contains blank ids")
+    if len(set(cleaned)) != len(cleaned):
+        raise ValueError("id list has duplicate ids")
+    free = {m["id"]: m for m in load_free_models(models_json)}
+    # Detect paid-but-known vs truly unknown via raw file.
+    import json as _json
+
+    raw = _json.loads(models_json.read_text(encoding="utf-8"))
+    known_all = set(((raw.get("opencode") or {}).get("models") or {}).keys())
+    missing = [i for i in cleaned if i not in free]
+    if missing:
+        paid = [i for i in missing if i in known_all]
+        unknown = [i for i in missing if i not in known_all]
+        if paid:
+            raise ValueError(f"paid/non-free models rejected: {paid}")
+        raise ValueError(f"unknown model ids: {unknown}")
+    return [free[i] for i in cleaned]
+
+
+def diff_new_ids(models_json: Path, known_ids: set[str] | list[str]) -> list[str]:
+    """Free ids in models.json not present in known_ids (drift discovery)."""
+    known = set(known_ids)
+    return sorted(i for i in list_free_ids(models_json) if i not in known)

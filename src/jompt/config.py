@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     jev_base_url: str = "https://opencode.ai/zen/v1"
     jompt_api_key: str = ""
     default_bias: int = 0
+    rerank_ai_backend: str = "off"
+    rerank_hf_enabled: bool = False
+    rank_choice_top_k: int = 50
 
 
 def default_settings() -> Settings:

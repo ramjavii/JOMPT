@@ -42,8 +42,7 @@ async def require_api_key(request: Request) -> None:
 
 @router.get("/rankings", response_model=RankingsResponse, dependencies=[Depends(require_api_key)])
 async def rankings(state=Depends(get_state)) -> RankingsResponse:
-    models = [
-        CatalogModelOut(
+    models = [        CatalogModelOut(
             id=e.id,
             score=e.score,
             strengths=sorted(e.strengths),
@@ -53,7 +52,8 @@ async def rankings(state=Depends(get_state)) -> RankingsResponse:
         )
         for e in state.catalog
     ]
-    return RankingsResponse(count=len(models), models=models)
+    return RankingsResponse(count=len(models), models=models, source="catalog",
+                            updated_at=getattr(state, "catalog_updated_at", None))
 
 
 @router.post("/chat", response_model=ChatResponse, dependencies=[Depends(require_api_key)])

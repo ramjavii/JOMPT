@@ -15,6 +15,29 @@ MAX_PROMPT_CHARS = 32_000
 QUESTION_ID = "route"
 
 
+def top_k_by_score(rank: RankList, k: int) -> RankList:
+    """Pre-filter to top-K by embedded score for large rank lists.
+
+    Parses leading 'score N' from descriptions (fallback: keep order).
+    Default rank is already heavy→light, so slicing preserves intent.
+    """
+    if k <= 0 or len(rank.models) <= k:
+        return rank
+    import re as _re
+
+    def _score(desc: str) -> int:
+        m = _re.match(r"\s*score\s+(\d+)", desc or "")
+        return int(m.group(1)) if m else -1
+
+    scored = sorted(rank.models, key=lambda e: (-_score(e.description), e.id))
+    kept = scored[:k]
+    # Preserve original heavy→light order among kept.
+    order = {e.id: i for i, e in enumerate(rank.models)}
+    kept.sort(key=lambda e: order.get(e.id, 0))
+    default = rank.default if rank.default in {e.id for e in kept} else kept[len(kept) // 2].id
+    return RankList(default=default, models=tuple(kept))
+
+
 def build_questions(rank: RankList) -> dict[str, Any]:
     criteria = {e.id: e.description or e.id for e in rank.models}
     return {

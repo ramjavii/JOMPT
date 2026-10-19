@@ -48,6 +48,8 @@ class RankingsResponse(BaseModel):
 
     count: int
     models: list[CatalogModelOut]
+    source: str = "catalog"
+    updated_at: str | None = None
 
 
 class ModelUsage(BaseModel):
