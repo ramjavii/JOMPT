@@ -112,10 +112,19 @@ async def chat(body: ChatRequest, state=Depends(get_state)) -> ChatResponse:
             logger.warning("provider failure model=%s err=%s", entry.id, exc)
             last_err = exc
             failed.append(entry.id)
+            if exc.is_systemic:
+                # free_tier / auth / funds: retrying another model cannot help
+                logger.error("systemic provider error (kind=%s); not retrying", exc.kind)
+                break
 
     if result is None:
-        logger.error("all model attempts failed: %s", last_err)
-        raise HTTPException(status_code=502, detail="all model attempts failed")
+        detail = "all model attempts failed"
+        if isinstance(last_err, ProviderError):
+            detail = f"{detail}: {last_err.user_hint}"
+        elif last_err is not None:
+            detail = f"{detail}: upstream provider error"
+        logger.error("%s (last_err=%s)", detail, last_err)
+        raise HTTPException(status_code=502, detail=detail)
 
     latency_ms = int((time.perf_counter() - started) * 1000)
     state.tracker = state.tracker.add(

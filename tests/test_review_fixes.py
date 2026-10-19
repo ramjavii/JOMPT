@@ -111,5 +111,9 @@ def test_provider_error_body_not_leaked_to_client(
     monkeypatch.setattr(op.OpenCodeProvider, "chat", always_fail)
     r = client.post("/v1/chat", json={"prompt": "hi"})
     assert r.status_code == 502
+    # Raw upstream bodies must never reach the client...
     assert "secret-account-xyz" not in r.text
-    assert r.json()["detail"] == "all model attempts failed"
+    # ...but a sanitized classification hint is allowed (kind=unknown → generic).
+    detail = r.json()["detail"]
+    assert detail.startswith("all model attempts failed")
+    assert "secret-account-xyz" not in detail

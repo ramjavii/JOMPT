@@ -1,0 +1,181 @@
+{
+  "default": "minimax-m3-free",
+  "models": [
+    {
+      "id": "step-5-preview-free",
+      "description": "score 96; code, heavy, long-context, reasoning, tools, vision"
+    },
+    {
+      "id": "nemotron-3-ultra-free",
+      "description": "score 81; heavy, long-context, reasoning, tools"
+    },
+    {
+      "id": "muse-spark-1.2-contributor-free",
+      "description": "score 80; code, long-context, reasoning, tools, vision"
+    },
+    {
+      "id": "muse-spark-1.3-contributor-free",
+      "description": "score 80; code, long-context, reasoning, tools, vision"
+    },
+    {
+      "id": "x-preview-f-free",
+      "description": "score 74; code, long-context, reasoning, tools, vision"
+    },
+    {
+      "id": "beam-free",
+      "description": "score 73; code, long-context, reasoning, tools"
+    },
+    {
+      "id": "cat-jam-free",
+      "description": "score 73; code, long-context, reasoning, tools"
+    },
+    {
+      "id": "nemotron-3.5-super-vl-free",
+      "description": "score 70; long-context, reasoning, tools, vision"
+    },
+    {
+      "id": "longcat-2.5-preview-free",
+      "description": "score 69; code, long-context, reasoning, tools, vision"
+    },
+    {
+      "id": "space-bunny-free",
+      "description": "score 69; code, long-context, reasoning, tools, vision"
+    },
+    {
+      "id": "mimo-v2-pro-free",
+      "description": "score 66; long-context, reasoning, tools"
+    },
+    {
+      "id": "exo-free",
+      "description": "score 64; long-context, reasoning, tools, vision"
+    },
+    {
+      "id": "fledge-alpha-free",
+      "description": "score 64; long-context, reasoning, tools, vision"
+    },
+    {
+      "id": "longcat-2.0-free",
+      "description": "score 63; long-context, reasoning, tools"
+    },
+    {
+      "id": "kimi-k2.5-free",
+      "description": "score 58; reasoning, tools, vision"
+    },
+    {
+      "id": "mimo-v2-omni-free",
+      "description": "score 58; reasoning, tools, vision"
+    },
+    {
+      "id": "mimo-v2.5-free",
+      "description": "score 58; reasoning, tools, vision"
+    },
+    {
+      "id": "qwen3.6-plus-free",
+      "description": "score 58; reasoning, tools, vision"
+    },
+    {
+      "id": "big-pickle",
+      "description": "score 56; reasoning, tools"
+    },
+    {
+      "id": "laguna-s-2.1-free",
+      "description": "score 56; code, reasoning, tools"
+    },
+    {
+      "id": "ll-alpha-free",
+      "description": "score 56; reasoning, tools"
+    },
+    {
+      "id": "hy3-free",
+      "description": "score 55; code, reasoning, tools"
+    },
+    {
+      "id": "minimax-m3-free",
+      "description": "score 55; reasoning, tools, vision"
+    },
+    {
+      "id": "glm-4.7-free",
+      "description": "score 51; reasoning, tools"
+    },
+    {
+      "id": "glm-5-free",
+      "description": "score 51; reasoning, tools"
+    },
+    {
+      "id": "grok-code",
+      "description": "score 51; code, reasoning, tools"
+    },
+    {
+      "id": "minimax-m2.1-free",
+      "description": "score 51; reasoning, tools"
+    },
+    {
+      "id": "minimax-m2.5-free",
+      "description": "score 51; reasoning, tools"
+    },
+    {
+      "id": "nemotron-3-super-free",
+      "description": "score 51; reasoning, tools"
+    },
+    {
+      "id": "ring-2.6-1t-free",
+      "description": "score 51; reasoning, tools"
+    },
+    {
+      "id": "deepseek-v4.1-flash-free",
+      "description": "score 50; code, flash, reasoning, tools, vision"
+    },
+    {
+      "id": "glm-5.3-flash-free",
+      "description": "score 50; code, flash, reasoning, tools, vision"
+    },
+    {
+      "id": "hy3-preview-free",
+      "description": "score 45; reasoning, tools"
+    },
+    {
+      "id": "mimo-v2.6-flash-free",
+      "description": "score 45; code, flash, reasoning, tools, vision"
+    },
+    {
+      "id": "deepseek-v4-flash-free",
+      "description": "score 38; code, flash, reasoning, tools"
+    },
+    {
+      "id": "nemotron-3.5-lightning-free",
+      "description": "score 38; flash, reasoning, tools"
+    },
+    {
+      "id": "ling-3.0-flash-fin-free",
+      "description": "score 33; flash, reasoning, tools"
+    },
+    {
+      "id": "ling-3.0-flash-free",
+      "description": "score 33; flash, reasoning, tools"
+    },
+    {
+      "id": "ling-3.1-flash-free",
+      "description": "score 33; flash, reasoning, tools"
+    },
+    {
+      "id": "mimo-v2-flash-free",
+      "description": "score 33; flash, reasoning, tools"
+    },
+    {
+      "id": "ling-3.0-tiny-free",
+      "description": "score 29; light, reasoning, tools"
+    },
+    {
+      "id": "north-mini-code-free",
+      "description": "score 27; code, light, reasoning, tools"
+    },
+    {
+      "id": "trinity-large-preview-free",
+      "description": "score 14; tools"
+    },
+    {
+      "id": "ling-2.6-flash-free",
+      "description": "score 8; flash, tools"
+    }
+  ]
+}

@@ -9,6 +9,7 @@ _DEFAULT_CACHE = Path.home() / ".cache" / "opencode" / "models.json"
 _PKG_ROOT = Path(__file__).resolve().parents[2]
 _DEFAULT_OVERRIDES = _PKG_ROOT / "catalog" / "catalog_overrides.yaml"
 _DEFAULT_CATALOG = _PKG_ROOT / "catalog" / "catalog.json"
+_DEFAULT_RANK_LIST = _PKG_ROOT / "config" / "rank_list.json"
 
 
 class Settings(BaseSettings):
@@ -17,8 +18,11 @@ class Settings(BaseSettings):
     models_json_path: Path = _DEFAULT_CACHE
     overrides_path: Path = _DEFAULT_OVERRIDES
     catalog_out_path: Path = _DEFAULT_CATALOG
+    rank_list_path: Path = _DEFAULT_RANK_LIST
+    jev_model: str = "jev-1.13-free"
     opencode_api_key: str = ""
     opencode_base_url: str = "https://opencode.ai/inference/openai/v1"
+    jev_base_url: str = "https://opencode.ai/zen/v1"
     jompt_api_key: str = ""
     default_bias: int = 0
 

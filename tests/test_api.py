@@ -125,3 +125,79 @@ def test_chat_complex_prompt_picks_heavier_model(
     assert body["model_score"] >= body["complexity_score"] or body["model"] == "nemotron-3-ultra-free"
     # must not pick the lightest for a hard task
     assert body["model"] != "ling-3.0-tiny-free"
+
+
+# --- RED: surface real upstream errors and fail fast on systemic ones ---------
+
+def test_chat_all_fail_surfaces_sanitized_hint(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """502 detail must carry a sanitized classification hint (raw body stays server-side)."""
+    from jompt.providers import opencode as op
+    from jompt.providers.opencode import ProviderError
+
+    calls: list[str] = []
+
+    async def failing_chat(self, model: str, messages: list, **kw) -> ChatResult:
+        calls.append(model)
+        raise ProviderError(
+            "upstream provider error 403: FreeTierError: "
+            "OpenCode's free tier can only be used from within OpenCode. secret-tenant-123",
+            status_code=403,
+            kind="free_tier",
+        )
+
+    monkeypatch.setattr(op.OpenCodeProvider, "chat", failing_chat)
+    r = client.post("/v1/chat", json={"prompt": "hi"})
+    assert r.status_code == 502
+    detail = r.json()["detail"]
+    # sanitized hint present and actionable
+    assert "free tier" in detail.lower()
+    assert "OpenCode app" in detail
+    # but the raw upstream body (and any secrets in it) must NOT leak
+    assert "secret-tenant-123" not in detail
+
+
+def test_chat_fails_fast_on_systemic_error(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A systemic error (free_tier/auth/funds) must not burn the whole fallback pool."""
+    from jompt.providers import opencode as op
+    from jompt.providers.opencode import ProviderError
+
+    calls: list[str] = []
+
+    async def failing_chat(self, model: str, messages: list, **kw) -> ChatResult:
+        calls.append(model)
+        raise ProviderError("upstream provider error 403: FreeTierError", status_code=403, kind="free_tier")
+
+    monkeypatch.setattr(op.OpenCodeProvider, "chat", failing_chat)
+    r = client.post("/v1/chat", json={"prompt": "hi"})
+    assert r.status_code == 502
+    assert len(calls) == 1  # stop after first systemic failure
+
+
+def test_chat_retries_non_systemic_errors(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Transient per-model errors (unavailable) still fall through the pool."""
+    from jompt.providers import opencode as op
+    from jompt.providers.opencode import ProviderError
+
+    calls: list[str] = []
+
+    async def flaky_chat(self, model: str, messages: list, **kw) -> ChatResult:
+        calls.append(model)
+        if len(calls) == 1:
+            raise ProviderError(
+                "upstream provider error 400: Upstream request failed: Model is unavailable.",
+                status_code=400,
+                kind="unavailable",
+            )
+        return ChatResult(content="ok", model=model, input_tokens=1, output_tokens=1, finish_reason="stop")
+
+    monkeypatch.setattr(op.OpenCodeProvider, "chat", flaky_chat)
+    r = client.post("/v1/chat", json={"prompt": "hi"})
+    assert r.status_code == 200
+    assert len(calls) == 2
+    assert r.json()["fallback_from"] == [calls[0]]
